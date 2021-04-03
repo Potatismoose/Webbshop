@@ -1,5 +1,6 @@
 ﻿using System;
 
+
 namespace Webbshop.Views
 {
     static class LoginView
@@ -7,12 +8,21 @@ namespace Webbshop.Views
 
         public static (string userName, string password) PrintLoginPage()
         {
-            Console.WriteLine("Logga in\n");
+            SharedView.PrintWithDarkGreyText("Logga in\n");
+            Console.WriteLine("\tAvbryt när som helst genom att trycka x+enter");
             Console.Write("\tAnvändarnamn> ");
             var userName = Console.ReadLine();
+            if (userName.ToLower() == "x")
+            {
+                return (userName.ToLower(), string.Empty);
+            }
             Console.Write("\tLösenord> ");
             var password = Console.ReadLine();
 
+            if (password.ToLower() == "x")
+            {
+                return (string.Empty, password.ToLower());
+            }
             return (userName, password);
         }
     }

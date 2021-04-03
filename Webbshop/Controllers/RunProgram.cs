@@ -2,7 +2,7 @@
 using Webbshop.Views;
 using webshopAPI;
 using System.Threading;
-
+using webshopAPI.Helpers;
 
 namespace Webbshop.Controllers
 {
@@ -10,6 +10,7 @@ namespace Webbshop.Controllers
     {
         public void StartProgram()
         {
+            Seeder.Seed();
             Menu.PrintMainMenu();
         }
 

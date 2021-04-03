@@ -12,8 +12,7 @@ namespace Webbshop.Controllers
 {
     static class Menu
     {
-        static int menuOptionCounter = 1;
-        
+        static string abortChar = "x";
 
         public static void PrintMainMenu()
         {
@@ -21,6 +20,7 @@ namespace Webbshop.Controllers
             string menuInput = default;
             do
             {
+                Console.Clear();
                 StartView.Print();
                 menuInput = InputHelper.AskForMenuInput();
                 userMenuChoice = InputHelper.ValidateMenuInput(menuInput);
@@ -37,25 +37,29 @@ namespace Webbshop.Controllers
                         case 1:
                             var userCredentials = LoginView.PrintLoginPage();
                             var user = api.Login(userCredentials.userName, userCredentials.password);
-                            
-                            if (UserController.UserIsNull(user))
+
+                            if (UserController.UserIsNull(user)
+                                && !userCredentials.userName.Contains(abortChar))
                             {
                                 SharedError.PrintWrongCredentials(user);
-                                Thread.Sleep(2000);
-                                Console.Clear();
+                                
+                                
                                 continue;
+                            }
+                            else if (userCredentials.userName.Contains(abortChar))
+                            { 
+                                break; 
                             }
                             else if (user.IsAdmin)
                             {
+                               
                                 AdminController.PrintAdminSelectionMenu(user);
                             }
                             else
                             {
-                                
-
                                 UserView.PrintBuyMenuOptions(SharedView.GetBuyMenuOptions());
                                 userMenuChoice = InputHelper.ValidateMenuInput(InputHelper.AskForMenuInput());
-                                Console.ReadKey();
+                                
                             }
                             break;
 
@@ -66,20 +70,15 @@ namespace Webbshop.Controllers
                                 registererUserCredentials.verifyPassword))
                             {
                                 SharedError.Failed();
-                                Thread.Sleep(2000);
-                                Console.Clear();
                                 break;
                             }
                             SharedError.Success();
-                            Thread.Sleep(2000);
-                            Console.Clear();
-                            break;
-                        case 3:
                             break;
                         case 0:
                             Environment.Exit(1);
                             break;
                         default:
+                            SharedError.PrintWrongMenuInput();
                             break;
                     }
                 }
