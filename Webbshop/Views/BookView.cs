@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using webshopAPI;
 
 namespace Webbshop.Views
@@ -23,13 +24,10 @@ namespace Webbshop.Views
                 }
         }
 
-        internal static void BookOptions(Book book)
+        internal static void ChangedNumberOfBooks(Book book)
         {
-            SharedView.PrintWithDarkGreyText($"Bokalternativ för {book.Title}");
-            Console.WriteLine("\t1.Lägg till fler av denna bok");
-            Console.WriteLine("\t2. Uppdatera bokinformation");
-            Console.WriteLine("\t3. Lägg till kategori till bok");
-            Console.WriteLine("\t4. Ta bort bok");
+            Console.WriteLine($"\tAntalet böcker är nu {book.Amount}");
+            Thread.Sleep(2500);
         }
     }
 }

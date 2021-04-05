@@ -14,6 +14,7 @@ namespace Webbshop.Controllers
         public static void SearchForBook(User user)
         {
             WebShopApi api = new WebShopApi();
+            Console.Clear();
             BookView.SearchForBook();
             var searchKeyword = SharedController.GetSearchInput();
             var listWithMatchingBooks = api.GetBooks(searchKeyword);
@@ -22,6 +23,7 @@ namespace Webbshop.Controllers
                 var continueLoop = true;
                 do
                 {
+                    Console.Clear();
                     BookView.ListAllBooks(listWithMatchingBooks);
                     var input = SharedController.GetAndValidateInput();
                     if (input.validatedInput == 0 || input.validatedInput > listWithMatchingBooks.Count)
@@ -30,8 +32,14 @@ namespace Webbshop.Controllers
                     }
                     else
                     {
-                        //TODO: Fixa den här delen.
-                        Console.ReadKey();
+                        if (user.IsAdmin)
+                        {
+                            AdminController.BookOptions(listWithMatchingBooks[input.validatedInput-1], user);
+
+                        }
+                        else { 
+                        //TODO Här ska köpmeny för användare kallas på
+                        }
                         continueLoop = false;
                     }
 
@@ -41,42 +49,6 @@ namespace Webbshop.Controllers
             {
                 SharedError.NothingFound();
             }
-        }
-
-
-        public static void BookOptions(Book book)
-        {
-            var continueCode = true;
-            do
-            {
-                BookView.BookOptions(book);
-                var input = SharedController.GetAndValidateInput();
-                switch (input.validatedInput)
-                {
-
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                    case 3:
-                        break;
-                    case 4:
-                        break;
-                    case 0:
-                        if (input.menuInput.ToLower() == "x")
-                        {
-                            continueCode = false;
-                            break;
-                        }
-                        SharedError.PrintWrongMenuInput();
-                        break;
-                    default:
-                        SharedError.PrintWrongMenuInput();
-                        break;
-                }
-            } while (continueCode);
-            
-            
         }
     }
 }

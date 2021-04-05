@@ -42,5 +42,17 @@ namespace Webbshop.Views
             SharedView.PrintWithRedText("\tInget hittades");
             Thread.Sleep(2000);
         }
+
+        internal static void EmptyInput()
+        {
+            SharedView.PrintWithRedText("\tTom inmatning, vänligen ange något.");
+            Thread.Sleep(2000);
+        }
+
+        internal static void PrintWrongInput()
+        {
+            Console.WriteLine("\tFelaktig inmatning");
+            Thread.Sleep(2000);
+        }
     }
 }

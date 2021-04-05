@@ -52,5 +52,7 @@ namespace Webbshop.Controllers
             var validatedInput = InputHelper.ValidateMenuInput(menuInput);
             return (menuInput, validatedInput);
         }
+
+        
     }
 }

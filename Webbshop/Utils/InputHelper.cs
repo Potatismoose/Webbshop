@@ -25,5 +25,10 @@ namespace Webbshop.Utils
 
             return number;
         }
+
+        internal static string InputFreeText()
+        {
+            return Console.ReadLine();
+        }
     }
 }
