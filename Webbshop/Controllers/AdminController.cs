@@ -14,6 +14,51 @@ namespace Webbshop.Controllers
     {
         private static WebShopApi api = new WebShopApi();
 
+        public static void BookOptions(Book book, User admin)
+        {
+            var continueLoop = true;
+            do
+            {
+                Console.Clear();
+                if (book.Amount == 0)
+                {
+                    continueLoop = false;
+                    continue;
+                }
+                AdminView.UpdateBook(book);
+                var input = SharedController.GetAndValidateInput();
+                switch (input.validatedInput)
+                {
+                    case 1:
+                        Console.Clear();
+                        SetAmount(book, admin);
+                        break;
+                    case 2:
+                        Console.Clear();
+                        UpdateBookInfo(book, admin);
+                        break;
+                    case 3:
+                        Console.Clear();
+                        ChangeCategory(book, admin);
+                        break;
+                    case 4:
+                        DeleteBook(book, admin);
+                        break;
+                    case 0:
+                        if (input.menuInput.ToLower() == "x")
+                        {
+                            continueLoop = false;
+                            break;
+                        }
+                        SharedError.PrintWrongMenuInput();
+                        break;
+                    default:
+                        SharedError.PrintWrongMenuInput();
+                        break;
+                }
+            } while (continueLoop);
+        }
+
         public static void PrintAdminSelectionMenu(User admin)
         {
             SharedView.PrintWithGreenText($"\tVälkommen {admin.Name}");
@@ -36,9 +81,46 @@ namespace Webbshop.Controllers
                         case 1:
                             AdminFunctions(admin);
                             break;
+                        case 2:
+                            SharedController.BuyBook(admin);
+                            break;
                     }
                 }
             } while (!logoutUser);
+        }
+
+        private static void AddBook(User admin)
+        {
+            var bookInformation = AdminView.AddBook();
+
+            if (api.AddBook(
+                admin.Id,
+                Convert.ToInt32(bookInformation["Antal"]),
+                bookInformation["Titel"],
+                bookInformation["Författare"],
+                Convert.ToInt32(bookInformation["Pris"])))
+            {
+                var book = api.GetBooks(bookInformation["Titel"])[0];
+                ChangeCategory(book, admin);
+            }
+            else
+            {
+                SharedError.Failed();
+            }
+
+        }
+
+        private static void AddUser(User admin)
+        {
+            var userCredentials = AdminView.AddUser();
+            if (api.AddUser(admin.Id, userCredentials.userName, userCredentials.password))
+            {
+                SharedError.Success();
+            }
+            else
+            {
+                SharedError.Failed();
+            }
         }
 
         private static void AdminFunctions(User admin)
@@ -63,14 +145,13 @@ namespace Webbshop.Controllers
                         AddBook(admin);
                         break;
                     case 5:
-                        BookController.ListBooksAndAskForInput(admin, api.GetAvailibleBooks());
-                        
+                        GetBookAndEnterBookOptions(admin);
                         break;
                     case 6:
-                        BookController.SearchForBook(admin);
+                        GetBookAndEnterBookOptions(admin);
                         break;
                     case 7:
-                        BookController.ListBooksAndAskForInput(admin,api.GetAvailibleBooks());
+                        GetAllBooksAndEnterBookOptions(admin);
                         break;
                     case 0:
                         continueLoop = SharedController.GoBackIf_X_IsPressedOrPrintErrorMsg(input.menuInput);
@@ -80,92 +161,149 @@ namespace Webbshop.Controllers
 
         }
 
-        private static void AddBook(User admin)
+        private static void ChangeAuthor(User admin, Book book)
         {
-            var bookInformation = AdminView.AddBook();
-
-            if (api.AddBook(
-                admin.Id,
-                Convert.ToInt32(bookInformation["Antal"]),
-                bookInformation["Titel"],
-                bookInformation["Författare"],
-                Convert.ToInt32(bookInformation["Pris"])))
+            var continueLoop = true;
+            do
             {
-                var book = api.GetBooks(bookInformation["Titel"])[0];
-                ChangeCategory(book, admin);
-            }
-            else 
-            {
-                SharedError.Failed();
-            }
-
-        }
-
-        private static void SearchForUser(User admin)
-        {
-            AdminView.SearchForUser(admin);
-            var searchKeyword = SharedController.GetSearchInput();
-            var listWithUsers = api.FindUser(admin.Id, searchKeyword);
-            if (listWithUsers.Count > 0)
-            {
-                var continueLoop = true;
-                do
+                AdminView.ChangeAuthor();
+                var input = InputHelper.InputFreeText();
+                if (string.IsNullOrEmpty(input))
                 {
-                    AdminView.ListAllUsers(listWithUsers);
-                    var input = SharedController.GetAndValidateInput();
-                    if (input.validatedInput == 0 || input.validatedInput > listWithUsers.Count)
-                    {
-                        SharedError.PrintWrongMenuInput();
-                    }
-                    else
-                    {
-                        EditUser(admin, listWithUsers[input.validatedInput - 1]);
-                        continueLoop = false;
-                    }
+                    SharedError.EmptyInput();
+                    continue;
+                }
+                if (book.Author != input)
+                {
+                    book.Author = input;
+                    api.UpdateBook(admin.Id, book.Id, book.Title, book.Author, book.Price);
+                    continueLoop = false;
+                }
 
-                } while (continueLoop);
-            }
-            else
-            {
-
-                SharedError.NothingFound();
-            }
+            } while (continueLoop);
         }
 
-
-
-        private static void AddUser(User admin)
+        private static void ChangeCategory(Book book, User admin)
         {
-            var userCredentials = AdminView.AddUser();
-            if (api.AddUser(admin.Id, userCredentials.userName, userCredentials.password))
-            {
-                SharedError.Success();
-            }
-            else
-            {
-                SharedError.Failed();
-            }
-        }
-
-        private static void ListAllUsers(User admin)
-        {
-            var listWithUsers = api.ListUsers(admin.Id);
+            var categories = api.GetCategories();
             var continueLoop = true;
             do
             {
                 Console.Clear();
-                AdminView.ListAllUsers(listWithUsers);
-                var input = SharedController.GetAndValidateInput();
-                if (input.validatedInput == 0 || input.validatedInput > listWithUsers.Count)
+                AdminView.ChangeCategory(book, categories);
+                if (categories.Count() > 0)
                 {
-                    SharedError.PrintWrongMenuInput();
+                    var input = SharedController.GetAndValidateInput();
+                    if (input.validatedInput > 0
+                        && input.validatedInput <= categories.Count())
+                    {
+                        var success = api.AddBookToCategory(
+                                        admin.Id,
+                                        book.Id,
+                                        categories[input.validatedInput - 1].Id);
+                        continueLoop = false;
+                        if (success)
+                        {
+                            SharedError.Success();
+                        }
+                        else
+                        {
+                            SharedError.Failed();
+                        }
+                    }
+                    else
+                    {
+                        SharedError.PrintWrongInput();
+                    }
+                }
+            } while (continueLoop);
+        }
+
+        private static void ChangePrice(User admin, Book book)
+        {
+            var continueLoop = true;
+            do
+            {
+                AdminView.ChangePrice();
+                var input = InputHelper.InputFreeText();
+                if (string.IsNullOrEmpty(input))
+                {
+                    SharedError.EmptyInput();
+                    continue;
+                }
+                bool convertedSuccess = int.TryParse(input, out int price);
+                if (convertedSuccess && price >= 0)
+                {
+                    if (book.Price != price)
+                    {
+                        book.Price = price;
+                        api.UpdateBook(admin.Id, book.Id, book.Title, book.Author, book.Price);
+                        continueLoop = false;
+                    }
                 }
                 else
                 {
-                    EditUser(admin, listWithUsers[input.validatedInput - 1]);
-                    continueLoop = false;
+                    SharedError.PrintWrongInput();
                 }
             } while (continueLoop);
+        }
+
+        private static void ChangeTitle(User admin, Book book)
+        {
+            var continueLoop = true;
+            do
+            {
+                AdminView.ChangeTitle();
+                var input = InputHelper.InputFreeText();
+                if (string.IsNullOrEmpty(input))
+                {
+                    SharedError.EmptyInput();
+                    continue;
+                }
+                if (book.Title != input)
+                {
+                    book.Title = input;
+                    api.UpdateBook(admin.Id, book.Id, book.Title, book.Author, book.Price);
+                    continueLoop = false;
+                }
+
+            } while (continueLoop);
+        }
+
+        private static void DeleteBook(Book book, User admin)
+        {
+            bool continueLoop = true;
+            do
+            {
+                Console.Clear();
+                AdminView.DeleteBook(book);
+                var input = SharedController.GetAndValidateInput();
+                if (input.validatedInput > 0)
+                {
+                    var originalBookAmount = book.Amount;
+                    if (api.DeleteBook(admin.Id, book.Id, input.validatedInput))
+                    {
+                        SharedError.Success();
+                        if (book.Amount == originalBookAmount
+                            && book.Amount - input.validatedInput <= 0)
+                        {
+                            book.Amount = 0;
+                        }
+                    }
+                    else
+                    {
+                        SharedError.Failed();
+                    }
+                    continueLoop = false;
+
+
+                }
+                else
+                {
+                    SharedError.PrintWrongInput();
+                }
+            } while (continueLoop);
+
 
         }
 
@@ -222,122 +360,110 @@ namespace Webbshop.Controllers
 
         }
 
-        public static void BookOptions(Book book, User admin)
+        private static void GetAllBooksAndEnterBookOptions(User admin)
         {
+            var availibleBooks = api.GetAvailibleBooks();
+            BookView.ListAllBooks(availibleBooks);
+            var input = SharedController.GetAndValidateInput();
+            if (input.validatedInput != 0
+                && input.validatedInput <= availibleBooks.Count)
+            {
+                AdminController.BookOptions(availibleBooks[input.validatedInput - 1], admin);
+            }
+            else
+            {
+                SharedError.PrintWrongInput();
+            }
+        }
+
+        private static void GetBookAndEnterBookOptions(User admin)
+        {
+            var book = BookController.SearchForBook();
+            if (book != null)
+            {
+                BookOptions(book, admin);
+            }
+        }
+        private static void ListAllUsers(User admin)
+        {
+            var listWithUsers = api.ListUsers(admin.Id);
             var continueLoop = true;
             do
             {
                 Console.Clear();
-                if (book.Amount == 0)
-                {
-                    continueLoop = false;
-                    continue;
-                }
-                AdminView.UpdateBook(book);
+                AdminView.ListAllUsers(listWithUsers);
                 var input = SharedController.GetAndValidateInput();
-                switch (input.validatedInput)
+                if (input.validatedInput == 0 || input.validatedInput > listWithUsers.Count)
                 {
-                    case 1:
-                        Console.Clear();
-                        SetAmount(book, admin);
-                        break;
-                    case 2:
-                        Console.Clear();
-                        UpdateBookInfo(book, admin);
-                        break;
-                    case 3:
-                        Console.Clear();
-                        ChangeCategory(book,admin);
-                        break;
-                    case 4:
-                        DeleteBook(book, admin);
-                        break;
-                    case 0:
-                        if (input.menuInput.ToLower() == "x")
-                        {
-                            continueLoop = false;
-                            break;
-                        }
-                        SharedError.PrintWrongMenuInput();
-                        break;
-                    default:
-                        SharedError.PrintWrongMenuInput();
-                        break;
-                }
-            } while (continueLoop);
-        }
-
-        private static void DeleteBook(Book book, User admin)
-        {
-            bool continueLoop = true;
-            do
-            {
-                Console.Clear();
-                AdminView.DeleteBook(book);
-                var input = SharedController.GetAndValidateInput();
-                if (input.validatedInput > 0)
-                {
-                    var originalBookAmount = book.Amount;
-                    if (api.DeleteBook(admin.Id, book.Id, input.validatedInput))
-                    {
-                        SharedError.Success();
-                        if (book.Amount == originalBookAmount 
-                            && book.Amount - input.validatedInput <=0)
-                        {
-                            book.Amount = 0;
-                        }
-                    }
-                    else
-                    {
-                        SharedError.Failed();
-                    }
-                    continueLoop = false;
-                    
-                    
+                    SharedError.PrintWrongMenuInput();
                 }
                 else
                 {
-                    SharedError.PrintWrongInput();
+                    EditUser(admin, listWithUsers[input.validatedInput - 1]);
+                    continueLoop = false;
                 }
             } while (continueLoop);
-            
 
         }
 
-        private static void ChangeCategory(Book book, User admin)
+        private static void SearchForUser(User admin)
         {
-            var categories = api.GetCategories();
-            var continueLoop = true;
-            do
+            AdminView.SearchForUser(admin);
+            var searchKeyword = SharedController.GetSearchInput();
+            var listWithUsers = api.FindUser(admin.Id, searchKeyword);
+            if (listWithUsers.Count > 0)
             {
-                Console.Clear();
-                AdminView.ChangeCategory(book, categories);
-                if (categories.Count() > 0)
-                { 
+                var continueLoop = true;
+                do
+                {
+                    AdminView.ListAllUsers(listWithUsers);
                     var input = SharedController.GetAndValidateInput();
-                    if (input.validatedInput > 0
-                        && input.validatedInput <= categories.Count())
+                    if (input.validatedInput == 0 || input.validatedInput > listWithUsers.Count)
                     {
-                        var success = api.AddBookToCategory(
-                                        admin.Id,
-                                        book.Id,
-                                        categories[input.validatedInput - 1].Id);
-                        continueLoop = false;
-                        if (success)
-                        {
-                            SharedError.Success();
-                        }
-                        else
-                        {
-                            SharedError.Failed();
-                        }
+                        SharedError.PrintWrongMenuInput();
                     }
                     else
                     {
-                        SharedError.PrintWrongInput();
+                        EditUser(admin, listWithUsers[input.validatedInput - 1]);
+                        continueLoop = false;
                     }
+
+                } while (continueLoop);
+            }
+            else
+            {
+
+                SharedError.NothingFound();
+            }
+        }
+        private static void SetAmount(Book book, User admin)
+        {
+            AdminView.SetAmount();
+            var input = SharedController.GetAndValidateInput();
+            if (input.validatedInput != 0)
+            {
+                WebShopApi api = new WebShopApi();
+                if (api.SetAmount(admin.Id, book.Id, input.validatedInput))
+                {
+                    if (book.Amount <= 0)
+                    {
+                        book.Amount = 0;
+                    }
+                    SharedError.Success();
+                    BookView.ChangedNumberOfBooks(book);
                 }
-            } while (continueLoop);
+                else
+                {
+                    SharedError.Failed();
+                    BookView.ChangedNumberOfBooks(book);
+                }
+            }
+            else
+            {
+                SharedError.PrintWrongMenuInput();
+            }
+
+            //TODO fixa det här, metoden ej klar.
         }
 
         private static void UpdateBookInfo(Book book, User admin)
@@ -379,109 +505,6 @@ namespace Webbshop.Controllers
                         break;
                 }
             } while (continueLoop);
-        }
-
-        private static void ChangeTitle(User admin, Book book)
-        {
-            var continueLoop = true;
-            do
-            {
-                AdminView.ChangeTitle();
-                var input = InputHelper.InputFreeText();
-                if (string.IsNullOrEmpty(input))
-                {
-                    SharedError.EmptyInput();
-                    continue;
-                }
-                if (book.Title != input)
-                {
-                    book.Title = input;
-                    api.UpdateBook(admin.Id, book.Id, book.Title, book.Author, book.Price);
-                    continueLoop = false;
-                }
-
-            } while (continueLoop);
-        }
-
-        private static void ChangeAuthor(User admin, Book book)
-        {
-            var continueLoop = true;
-            do
-            {
-                AdminView.ChangeAuthor();
-                var input = InputHelper.InputFreeText();
-                if (string.IsNullOrEmpty(input))
-                {
-                    SharedError.EmptyInput();
-                    continue;
-                }
-                if (book.Author != input)
-                {
-                    book.Author = input;
-                    api.UpdateBook(admin.Id, book.Id, book.Title, book.Author, book.Price);
-                    continueLoop = false;
-                }
-
-            } while (continueLoop);
-        }
-
-        private static void ChangePrice(User admin, Book book)
-        {
-            var continueLoop = true;
-            do
-            {
-                AdminView.ChangePrice();
-                var input = InputHelper.InputFreeText();
-                if (string.IsNullOrEmpty(input))
-                {
-                    SharedError.EmptyInput();
-                    continue;
-                }
-                bool convertedSuccess = int.TryParse(input, out int price);
-                if (convertedSuccess && price >= 0)
-                {
-                    if (book.Price != price)
-                    {
-                        book.Price = price;
-                        api.UpdateBook(admin.Id, book.Id, book.Title, book.Author, book.Price);
-                        continueLoop = false;
-                    }
-                }
-                else
-                {
-                    SharedError.PrintWrongInput();
-                }
-            } while (continueLoop);
-        }
-
-        private static void SetAmount(Book book, User admin)
-        {
-            AdminView.SetAmount();
-            var input = SharedController.GetAndValidateInput();
-            if (input.validatedInput != 0)
-            {
-                WebShopApi api = new WebShopApi();
-                if (api.SetAmount(admin.Id, book.Id, input.validatedInput))
-                {
-                    if (book.Amount <= 0)
-                    {
-                        book.Amount = 0;
-                    }
-                    SharedError.Success();
-                    BookView.ChangedNumberOfBooks(book);
-                }
-                else
-                {
-                    SharedError.Failed();
-                    BookView.ChangedNumberOfBooks(book);
-                }
-            }
-            else
-            {
-                SharedError.PrintWrongMenuInput();
-            }
-
-            //TODO fixa det här, metoden ej klar.
         }
     }
 }

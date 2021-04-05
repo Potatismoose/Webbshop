@@ -10,11 +10,11 @@ namespace Webbshop.Views
 {
     static class SharedError
     {
-        public static void PrintWrongMenuInput()
+        public static void Failed()
         {
-            SharedView.PrintWithRedText("\tFelaktigt menyval, försök igen.");
+            SharedView.PrintWithRedText("\tMisslyckades.");
             GeneralViewHelper.WaitAndClearScreen();
-        } 
+        }
 
         public static void PrintWrongCredentials(User user)
         {
@@ -25,22 +25,15 @@ namespace Webbshop.Views
             }
         }
 
-        public static void Failed()
+        public static void PrintWrongMenuInput()
         {
-            SharedView.PrintWithRedText("\tMisslyckades.");
+            SharedView.PrintWithRedText("\tFelaktigt menyval, försök igen.");
             GeneralViewHelper.WaitAndClearScreen();
-        }
-
+        } 
         public static void Success()
         {
             SharedView.PrintWithGreenText("\tLyckades!");
             GeneralViewHelper.WaitAndClearScreen();
-        }
-
-        internal static void NothingFound()
-        {
-            SharedView.PrintWithRedText("\tInget hittades");
-            Thread.Sleep(2000);
         }
 
         internal static void EmptyInput()
@@ -49,6 +42,11 @@ namespace Webbshop.Views
             Thread.Sleep(2000);
         }
 
+        internal static void NothingFound()
+        {
+            SharedView.PrintWithRedText("\tInget hittades");
+            Thread.Sleep(2000);
+        }
         internal static void PrintWrongInput()
         {
             Console.WriteLine("\tFelaktig inmatning");

@@ -5,41 +5,9 @@ namespace Webbshop.Views
 {
     static class SharedView
     {
-
-        static List<string> buyMenuOptions = new List<string>
+        public static void PrintWithDarkGreyText(string text)
         {
-        "Bokmeny",
-        "Köp en bok",
-        "Gå tillbaka"
-
-        };
-
-        static List<string> buyBookOptions = new List<string>
-        {
-        "Bokmeny",
-        "Lista böcker i kategori",
-        "Sök via kategori",
-        "Lista böcker från författare",
-        "Sök böcker",
-        "Gå tillbaka"
-
-        };
-
-        public static List<string> GetBuyMenuOptions()
-        {
-            return buyMenuOptions;
-        }
-
-        public static List<string> GetBookMenuOptions()
-        {
-            return buyBookOptions;
-        }
-
-
-
-        public static void PrintWithRedText(string text)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(text);
             Console.ResetColor();
         }
@@ -51,11 +19,22 @@ namespace Webbshop.Views
             Console.ResetColor();
         }
 
-        public static void PrintWithDarkGreyText(string text)
+        public static void PrintWithRedText(string text)
         {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(text);
             Console.ResetColor();
+        }
+
+        internal static void BuyBook()
+        {
+            SharedView.PrintWithDarkGreyText("Köp en bok");
+            Console.WriteLine("\tLeta reda på boken du vill köpa på följande sätt");
+            Console.WriteLine("\t1. Sök efter bok (nyckelord)");
+            Console.WriteLine("\t2. Sök efter författare");
+            Console.WriteLine("\t3. Sök efter kategori");
+            Console.WriteLine("\t4. Lista samtliga kategorier");
+            Console.WriteLine("\tX. Backa ett steg");
         }
     }
 }

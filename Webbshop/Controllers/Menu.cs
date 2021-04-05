@@ -57,7 +57,8 @@ namespace Webbshop.Controllers
                             }
                             else
                             {
-                                UserView.PrintBuyMenuOptions(SharedView.GetBuyMenuOptions());
+                                //TODO fixa
+                                //UserView.PrintBuyMenuOptions(SharedView.GetBuyMenuOptions());
                                 userMenuChoice = InputHelper.ValidateMenuInput(InputHelper.AskForMenuInput());
                                 
                             }

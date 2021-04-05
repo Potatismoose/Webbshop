@@ -10,51 +10,79 @@ namespace Webbshop.Controllers
 {
     class BookController
     {
-
-        public static void SearchForBook(User user)
+        private static WebShopApi api = new WebShopApi();
+        public static Book SearchForBook()
         {
             WebShopApi api = new WebShopApi();
             Console.Clear();
             BookView.SearchForBook();
             var searchKeyword = SharedController.GetSearchInput();
+            if (searchKeyword.ToLower() == "x")
+            {
+                return null;
+            }
             var listWithMatchingBooks = api.GetBooks(searchKeyword);
-            ListBooksAndAskForInput(user, listWithMatchingBooks);
-        }
-
-        public static void ListBooksAndAskForInput(User user, List<Book> listWithMatchingBooks)
-        {
+            
             if (listWithMatchingBooks.Count > 0)
             {
-                var continueLoop = true;
-                do
+                Console.Clear();
+                BookView.ListAllBooks(listWithMatchingBooks);
+                var input = SharedController.GetAndValidateInput();
+                if (input.validatedInput != 0
+                    && input.validatedInput <= listWithMatchingBooks.Count)
                 {
-                    Console.Clear();
-                    BookView.ListAllBooks(listWithMatchingBooks);
-                    var input = SharedController.GetAndValidateInput();
-                    if (input.validatedInput == 0 || input.validatedInput > listWithMatchingBooks.Count)
-                    {
-                        SharedError.PrintWrongMenuInput();
-                    }
-                    else
-                    {
-                        if (user.IsAdmin)
-                        {
-                            AdminController.BookOptions(listWithMatchingBooks[input.validatedInput - 1], user);
-
-                        }
-                        else
-                        {
-                            //TODO Här ska köpmeny för användare kallas på
-                        }
-                        continueLoop = false;
-                    }
-
-                } while (continueLoop);
+                    return api.GetBook(listWithMatchingBooks[input.validatedInput - 1].Id);
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
                 SharedError.NothingFound();
+                return null;
             }
+            
+            
+
+        }
+
+        internal static void BuyBook()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static void ShowInfoAboutBook(User user, Book book)
+        {
+            var continueLoop = true;
+            do
+            {
+                BookView.ShowInfoAboutBook(book);
+                var input = SharedController.GetSearchInput();
+                switch (input.ToLower())
+                {
+                    case "j":
+                        if (api.BuyBook(user.Id, book.Id))
+                        {
+                            SharedError.Success();
+                        }
+                        else
+                        {
+                            SharedError.Failed();
+                        }
+                        continueLoop = false;
+                        break;
+                    case "n":
+                        continueLoop = false;
+                        break;
+                    default:
+                        SharedError.PrintWrongInput();
+                        continueLoop = true;
+                        break;
+                }
+
+            } while (continueLoop);
         }
     }
 }

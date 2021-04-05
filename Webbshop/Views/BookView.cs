@@ -8,26 +8,39 @@ namespace Webbshop.Views
 {
     internal class BookView
     {
-        internal static void SearchForBook()
+        internal static void ChangedNumberOfBooks(Book book)
         {
-            SharedView.PrintWithDarkGreyText("Sök efter en bok");
-            Console.Write("\tSök >");
+            Console.WriteLine($"\tAntalet böcker är nu {book.Amount}");
+            Thread.Sleep(2500);
         }
 
         internal static void ListAllBooks(List<Book> listWithBooks)
         {
             SharedView.PrintWithDarkGreyText("Lista med alla böcker som matchar");
-            
-                for (int i = 0; i < listWithBooks.Count; i++)
-                {
-                    Console.WriteLine($"\t{i + 1}. {listWithBooks[i].Title} av författaren {listWithBooks[i].Author}");
-                }
+
+            for (int i = 0; i < listWithBooks.Count; i++)
+            {
+                Console.WriteLine($"\t{i + 1}. {listWithBooks[i].Title} av författaren {listWithBooks[i].Author}");
+            }
         }
 
-        internal static void ChangedNumberOfBooks(Book book)
+        internal static void SearchForBook()
         {
-            Console.WriteLine($"\tAntalet böcker är nu {book.Amount}");
-            Thread.Sleep(2500);
+            SharedView.PrintWithDarkGreyText("Sök efter en bok - X + enter för att avbryta");
+            Console.Write("\tSök >");
+        }
+
+        internal static void ShowInfoAboutBook(Book book)
+        {
+            SharedView.PrintWithDarkGreyText("Information om bok");
+            Console.WriteLine($"\tBoktitel: {book.Title}");
+            Console.WriteLine($"\tFörfattare: {book.Author}");
+            Console.WriteLine($"\tKategori: {book.Category.Name}");
+            Console.WriteLine($"\tPris: {book.Price}");
+            Console.WriteLine($"\tAntal tillgängliga böcker: {book.Amount}");
+
+            Console.WriteLine();
+            Console.Write("\tVill du köpa boken? j/n >");
         }
     }
 }

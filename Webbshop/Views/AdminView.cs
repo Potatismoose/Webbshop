@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using System;
 using System.Threading;
-using System.Threading.Tasks;
-using Webbshop.Controllers;
 using webshopAPI;
 using webshopAPI.Models;
+using Webbshop.Controllers;
+using System.Linq;
 
 namespace Webbshop.Views
 {
-    static class AdminView
+    internal static class AdminView
     {
         private static int MenuChoiceCounter { get; set; } = 1;
 
@@ -26,14 +24,8 @@ namespace Webbshop.Views
             return MenuChoiceCounter;
         }
 
-        private static void ResetMenuCounter()
-        {
-            MenuChoiceCounter = 1;
-        }
-
         public static void PrintAdminFunctions()
         {
-
             Console.Clear();
             SharedView.PrintWithDarkGreyText("Administratorfunktioner\n");
             Console.WriteLine();
@@ -41,14 +33,22 @@ namespace Webbshop.Views
             Console.WriteLine($"\t1. Lägg till användare");
             Console.WriteLine($"\t2. Lista alla användare");
             Console.WriteLine($"\t3. Sök en användare");
-
+            Console.WriteLine();
             SharedView.PrintWithDarkGreyText($"Bokmeny - Admin");
             Console.WriteLine($"\t4. Lägg till en bok");
             Console.WriteLine($"\t5. Ta bort en bok");
             Console.WriteLine($"\t6. Sök efter en bok");
             Console.WriteLine($"\t7. Lista alla böcker");
             Console.WriteLine();
+            SharedView.PrintWithDarkGreyText($"Statistik - Admin");
+            Console.WriteLine($"\t8. Sålda böcker");
+            Console.WriteLine($"\t9. Intjänade kronor");
+            Console.WriteLine($"\t10. Bästa kunden");
+            Console.WriteLine();
             Console.WriteLine($"\tX. Backa ett steg");
+
+            
+
 
             /*
                  ,
@@ -63,6 +63,19 @@ namespace Webbshop.Views
             */
         }
 
+        public static int PrintAdminMenu()
+        {
+            ResetMenuCounter();
+            return 0;
+        }
+
+        internal static Dictionary<string, string> AddBook()
+        {
+            SharedView.PrintWithDarkGreyText("Lägg till en bok");
+            var bookInformation = AskForInputToCreateBook();
+            return bookInformation;
+        }
+
         internal static (string userName, string password) AddUser()
         {
             Console.Clear();
@@ -74,88 +87,34 @@ namespace Webbshop.Views
             return (userName, password);
         }
 
-        public static int PrintAdminMenu()
+        internal static void ChangeAuthor()
         {
-            ResetMenuCounter();
-            return 0;
+            Console.Write("Ange ny författare >");
         }
 
-        internal static void ListAllUsers(List<User> listWithUsers)
+        internal static void ChangeCategory(Book book, List<BookCategory> categories)
         {
-            SharedView.PrintWithDarkGreyText("Lista med alla användare");
-
-            for (int i = 0; i < listWithUsers.Count; i++)
-            {
-                Console.WriteLine($"\t{i + 1}. {listWithUsers[i]}");
-            }
+            SharedView.PrintWithDarkGreyText($"Lägg till/ändra kategori för boken {book.Title}");
+            Console.WriteLine();
+            SharedController.ListCategories(categories);
         }
 
-        internal static Dictionary<string, string> AddBook()
-        {
+        
 
-            SharedView.PrintWithDarkGreyText("Lägg till en bok");
-            var bookInformation = AskForInputToCreateBook();
-            return bookInformation;
+        internal static void ChangePrice()
+        {
+            Console.Write("Ange nytt pris >");
         }
 
-        private static Dictionary<string, string> AskForInputToCreateBook()
+        internal static void ChangeTitle()
         {
-            Dictionary<string, string> askUserForThisInput = new Dictionary<string, string> {
-                { "Titel", "" },
-                { "Författare", "" },
-                { "Pris", "" },
-                { "Antal", "" }
-            };
-
-            foreach (var parameter in askUserForThisInput)
-            {
-                var continueLoop = true;
-                do
-                {
-                    Console.Clear();
-                    SharedView.PrintWithDarkGreyText("Lägg till information för att skapa en bok");
-                    Console.Write($"\t{parameter.Key} >");
-                    var input = Console.ReadLine();
-                    if (string.IsNullOrEmpty(input)
-                        || string.IsNullOrWhiteSpace(input))
-                    {
-                        SharedError.PrintWrongInput();
-                        continue;
-                    }
-
-                    if (int.TryParse(input, out int number))
-                    {
-
-                        if (number > 0)
-                        {
-                            askUserForThisInput[parameter.Key] = input;
-                            continueLoop = false;
-                        }
-                        else
-                        {
-                            continueLoop = true;
-                            SharedError.PrintWrongInput();
-                        }
-                    }
-                    else
-                    {
-                        askUserForThisInput[parameter.Key] = input;
-                        continueLoop = false;
-                    }
-
-                } while (continueLoop);
-            }
-            return askUserForThisInput;
+            Console.Write("Ange ny boktitel >");
         }
 
-        internal static void SearchForUser(User admin)
+        internal static void DeleteBook(Book book)
         {
-            Console.Clear();
-            WebShopApi api = new WebShopApi();
-            SharedView.PrintWithDarkGreyText(api.Ping(admin.Id));
-            SharedView.PrintWithDarkGreyText("Sök efter användare");
-            Console.Write("\tSökord >");
-
+            SharedView.PrintWithDarkGreyText("Ta bort böcker");
+            Console.WriteLine($"\tHur många vill du ta bort av boken {book.Title}?");
         }
 
         internal static void EditUser(User editUser)
@@ -173,6 +132,34 @@ namespace Webbshop.Views
             Console.WriteLine("\tX. Backa ett steg");
         }
 
+        internal static void ListAllUsers(List<User> listWithUsers)
+        {
+            SharedView.PrintWithDarkGreyText("Lista med alla användare");
+
+            for (int i = 0; i < listWithUsers.Count; i++)
+            {
+                Console.WriteLine($"\t{i + 1}. {listWithUsers[i]}");
+            }
+        }
+
+        internal static void SearchForUser(User admin)
+        {
+            Console.Clear();
+            WebShopApi api = new WebShopApi();
+            SharedView.PrintWithDarkGreyText(api.Ping(admin.Id));
+            SharedView.PrintWithDarkGreyText("Sök efter användare");
+            Console.Write("\tSökord >");
+        }
+
+        internal static void SetAmount()
+        {
+            SharedView.PrintWithDarkGreyText("Ändra antal tillgängliga böcker");
+            Console.WriteLine("\tDu kan ange ett posivt tal för att lägga till bok eller ange " +
+                "- framför för att ta bort det antalet böcker.");
+            Console.WriteLine();
+            Console.Write("\tAnge antal du vill lägga till eller ta bort");
+        }
+
         internal static void UpdateBook(Book book)
         {
             SharedView.PrintWithDarkGreyText($"Bokalternativ för {book.Title} - {book.Category.Name}");
@@ -185,15 +172,6 @@ namespace Webbshop.Views
             Console.WriteLine("\t4. Ta bort bok");
             Console.WriteLine();
             Console.WriteLine("\tX. Backa ett steg");
-        }
-
-        internal static void SetAmount()
-        {
-            SharedView.PrintWithDarkGreyText("Ändra antal tillgängliga böcker");
-            Console.WriteLine("\tDu kan ange ett posivt tal för att lägga till bok eller ange " +
-                "- framför för att ta bort det antalet böcker.");
-            Console.WriteLine();
-            Console.Write("\tAnge antal du vill lägga till eller ta bort");
         }
 
         internal static void UpdateBookInfo(Book book)
@@ -219,45 +197,59 @@ namespace Webbshop.Views
             Console.WriteLine("\tX. Backa ett steg");
         }
 
-        internal static void ChangeTitle()
+        private static Dictionary<string, string> AskForInputToCreateBook()
         {
-            Console.Write("Ange ny boktitel >");
-        }
+            Dictionary<string, string> askUserForThisInput = new Dictionary<string, string> {
+                { "Titel", "" },
+                { "Författare", "" },
+                { "Pris", "" },
+                { "Antal", "" }
+            };
 
-        internal static void ChangeAuthor()
-        {
-            Console.Write("Ange ny författare >");
-        }
-
-        internal static void ChangePrice()
-        {
-            Console.Write("Ange nytt pris >");
-        }
-
-        internal static void ChangeCategory(Book book, List<BookCategory> categories)
-        {
-            SharedView.PrintWithDarkGreyText($"Lägg till/ändra kategori för boken {book.Title}");
-            Console.WriteLine();
-            if (categories.Count > 0)
+            for (int i = 0; i < askUserForThisInput.Count; i++)
             {
-                for (int i = 0; i < categories.Count; i++)
+                var element = askUserForThisInput.ElementAt(i);
+                var continueLoop = true;
+                do
                 {
-                    Console.WriteLine($"\t{i + 1}. {categories[i]}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Inga kategorier funna. Lägg till en kategori först.");
-                Thread.Sleep(2500);
-            }
+                    Console.Clear();
+                    SharedView.PrintWithDarkGreyText("Lägg till information för att skapa en bok");
+                    Console.Write($"\t{element.Key} >");
+                    var input = Console.ReadLine();
+                    if (string.IsNullOrEmpty(input)
+                        || string.IsNullOrWhiteSpace(input))
+                    {
+                        SharedError.PrintWrongInput();
+                        continue;
+                    }
 
+                    if (int.TryParse(input, out int number))
+                    {
+                        if (number > 0)
+                        {
+                            askUserForThisInput[element.Key] = input;
+                            continueLoop = false;
+                        }
+                        else
+                        {
+                            continueLoop = true;
+                            SharedError.PrintWrongInput();
+                        }
+                    }
+                    else if (!(element.Key == "Pris" || element.Key == "Antal"))
+                    {
+                        askUserForThisInput[element.Key] = input;
+                        continueLoop = false;
+                    }
+
+                } while (continueLoop);
+            }
+            return askUserForThisInput;
         }
 
-        internal static void DeleteBook(Book book)
+        private static void ResetMenuCounter()
         {
-            SharedView.PrintWithDarkGreyText("Ta bort böcker");
-            Console.WriteLine($"\tHur många vill du ta bort av boken {book.Title}?");
-            
+            MenuChoiceCounter = 1;
         }
     }
 }
