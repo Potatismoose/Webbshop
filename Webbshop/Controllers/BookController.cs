@@ -18,6 +18,11 @@ namespace Webbshop.Controllers
             BookView.SearchForBook();
             var searchKeyword = SharedController.GetSearchInput();
             var listWithMatchingBooks = api.GetBooks(searchKeyword);
+            ListBooksAndAskForInput(user, listWithMatchingBooks);
+        }
+
+        public static void ListBooksAndAskForInput(User user, List<Book> listWithMatchingBooks)
+        {
             if (listWithMatchingBooks.Count > 0)
             {
                 var continueLoop = true;
@@ -34,11 +39,12 @@ namespace Webbshop.Controllers
                     {
                         if (user.IsAdmin)
                         {
-                            AdminController.BookOptions(listWithMatchingBooks[input.validatedInput-1], user);
+                            AdminController.BookOptions(listWithMatchingBooks[input.validatedInput - 1], user);
 
                         }
-                        else { 
-                        //TODO Här ska köpmeny för användare kallas på
+                        else
+                        {
+                            //TODO Här ska köpmeny för användare kallas på
                         }
                         continueLoop = false;
                     }

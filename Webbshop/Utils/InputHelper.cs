@@ -11,7 +11,7 @@ namespace Webbshop.Utils
 
         public static string AskForMenuInput()
         {
-            Console.Write("\n\tChoose a option >");
+            Console.Write("\n\tGör ditt val >");
             return Console.ReadLine();
         }
 

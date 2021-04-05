@@ -60,19 +60,44 @@ namespace Webbshop.Controllers
                         SearchForUser(admin);
                         break;
                     case 4:
-                        SearchForUser(admin);
+                        AddBook(admin);
                         break;
                     case 5:
-                        SearchForUser(admin);
+                        BookController.ListBooksAndAskForInput(admin, api.GetAvailibleBooks());
+                        
                         break;
                     case 6:
                         BookController.SearchForBook(admin);
+                        break;
+                    case 7:
+                        BookController.ListBooksAndAskForInput(admin,api.GetAvailibleBooks());
                         break;
                     case 0:
                         continueLoop = SharedController.GoBackIf_X_IsPressedOrPrintErrorMsg(input.menuInput);
                         break;
                 }
             } while (continueLoop);
+
+        }
+
+        private static void AddBook(User admin)
+        {
+            var bookInformation = AdminView.AddBook();
+
+            if (api.AddBook(
+                admin.Id,
+                Convert.ToInt32(bookInformation["Antal"]),
+                bookInformation["Titel"],
+                bookInformation["Författare"],
+                Convert.ToInt32(bookInformation["Pris"])))
+            {
+                var book = api.GetBooks(bookInformation["Titel"])[0];
+                ChangeCategory(book, admin);
+            }
+            else 
+            {
+                SharedError.Failed();
+            }
 
         }
 
@@ -221,8 +246,11 @@ namespace Webbshop.Controllers
                         UpdateBookInfo(book, admin);
                         break;
                     case 3:
+                        Console.Clear();
+                        ChangeCategory(book,admin);
                         break;
                     case 4:
+                        DeleteBook(book, admin);
                         break;
                     case 0:
                         if (input.menuInput.ToLower() == "x")
@@ -235,6 +263,79 @@ namespace Webbshop.Controllers
                     default:
                         SharedError.PrintWrongMenuInput();
                         break;
+                }
+            } while (continueLoop);
+        }
+
+        private static void DeleteBook(Book book, User admin)
+        {
+            bool continueLoop = true;
+            do
+            {
+                Console.Clear();
+                AdminView.DeleteBook(book);
+                var input = SharedController.GetAndValidateInput();
+                if (input.validatedInput > 0)
+                {
+                    var originalBookAmount = book.Amount;
+                    if (api.DeleteBook(admin.Id, book.Id, input.validatedInput))
+                    {
+                        SharedError.Success();
+                        if (book.Amount == originalBookAmount 
+                            && book.Amount - input.validatedInput <=0)
+                        {
+                            book.Amount = 0;
+                        }
+                    }
+                    else
+                    {
+                        SharedError.Failed();
+                    }
+                    continueLoop = false;
+                    
+                    
+                }
+                else
+                {
+                    SharedError.PrintWrongInput();
+                }
+            } while (continueLoop);
+            
+
+        }
+
+        private static void ChangeCategory(Book book, User admin)
+        {
+            var categories = api.GetCategories();
+            var continueLoop = true;
+            do
+            {
+                Console.Clear();
+                AdminView.ChangeCategory(book, categories);
+                if (categories.Count() > 0)
+                { 
+                    var input = SharedController.GetAndValidateInput();
+                    if (input.validatedInput > 0
+                        && input.validatedInput <= categories.Count())
+                    {
+                        var success = api.AddBookToCategory(
+                                        admin.Id,
+                                        book.Id,
+                                        categories[input.validatedInput - 1].Id);
+                        continueLoop = false;
+                        if (success)
+                        {
+                            SharedError.Success();
+                        }
+                        else
+                        {
+                            SharedError.Failed();
+                        }
+                    }
+                    else
+                    {
+                        SharedError.PrintWrongInput();
+                    }
                 }
             } while (continueLoop);
         }
@@ -362,7 +463,7 @@ namespace Webbshop.Controllers
                 WebShopApi api = new WebShopApi();
                 if (api.SetAmount(admin.Id, book.Id, input.validatedInput))
                 {
-                    if (book.Amount + input.validatedInput <= 0)
+                    if (book.Amount <= 0)
                     {
                         book.Amount = 0;
                     }
