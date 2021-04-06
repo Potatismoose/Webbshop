@@ -49,7 +49,20 @@ namespace Webbshop.Views
         }
         internal static void PrintWrongInput()
         {
-            Console.WriteLine("\tFelaktig inmatning");
+            SharedView.PrintWithRedText("\tFelaktig inmatning");
+            Thread.Sleep(2000);
+        }
+
+        internal static void BooksStillInCategory(int books)
+        {
+            SharedView.PrintWithRedText($"\tKan ej ta bort kategori. {books} böcker finns kvar i kategorin");
+            Console.WriteLine("\tTryck enter för att fortsätta");
+            Console.ReadKey();
+        }
+
+        internal static void UnChanged()
+        {
+            SharedView.PrintWithRedText("\tIngen ändring har gjorts.");
             Thread.Sleep(2000);
         }
     }

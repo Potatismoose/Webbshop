@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Webbshop.Utils;
 using Webbshop.Views;
 using webshopAPI;
+using webshopAPI.Models;
 
 namespace Webbshop.Controllers
 {
@@ -82,7 +83,7 @@ namespace Webbshop.Controllers
                             AdminFunctions(admin);
                             break;
                         case 2:
-                            SharedController.BuyBook(admin);
+                            SharedController.BuyBookMenu(admin);
                             break;
                     }
                 }
@@ -153,12 +154,167 @@ namespace Webbshop.Controllers
                     case 7:
                         GetAllBooksAndEnterBookOptions(admin);
                         break;
+                    case 8:
+                        AddCategory(admin);
+                        break;
+                    case 9:
+                        DeleteCategory(admin);
+                        break;
+                    case 10:
+                        UpdateCategory(admin);
+                        break;
+                    case 11:
+                        SoldBooks(admin);
+                        break;
+                    case 12:
+                        Earnings(admin);
+                        break;
+                    case 13:
+                        BestCustomer(admin);
+                        break;
                     case 0:
                         continueLoop = SharedController.GoBackIf_X_IsPressedOrPrintErrorMsg(input.menuInput);
                         break;
                 }
             } while (continueLoop);
 
+        }
+
+        private static void BestCustomer(User admin)
+        {
+            //TODO fixa
+        }
+
+        private static void Earnings(User admin)
+        {
+            //TODO fixa
+        }
+
+        private static void SoldBooks(User admin)
+        {
+            //TODO fixa
+        }
+
+        private static void UpdateCategory(User admin)
+        {
+            var continueLoop = true;
+            do
+            {
+                Console.Clear();
+                AdminView.UpdateCategory();
+                var categories = api.GetCategories();
+                SharedView.ListCategories(categories);
+                var input = SharedController.GetAndValidateInput();
+                if (input.validatedInput > 0
+                    && input.validatedInput <= categories.Count)
+                {
+                    UpdateCategory(admin, categories[input.validatedInput - 1]);
+                }
+                else
+                {
+                    if (input.validatedInput == 0
+                        && input.menuInput.ToLower() == "x")
+                    {
+                        continueLoop = false;
+                    }
+                    else
+                    {
+                        SharedError.PrintWrongInput();
+                    }
+                }
+
+            } while (continueLoop);
+        }
+
+        private static void UpdateCategory(User admin, BookCategory bookCategory)
+        {
+            AdminView.UpdateCategory(bookCategory.Name);
+            var input = SharedController.GetSearchInput();
+
+            if (SharedController.CheckIfNullOrEmptyOrWhiteSpace(input))
+            {
+                SharedError.UnChanged();
+            }
+            else
+            {
+                if (api.UpdateCategory(admin.Id, bookCategory.Id, input))
+                {
+                    SharedError.Success();
+                }
+                else
+                {
+                    SharedError.Failed();
+                }
+            }
+        }
+
+        private static void DeleteCategory(User admin)
+        {
+            var continueLoop = true;
+            do
+            {
+                Console.Clear();
+                AdminView.DeleteCategory();
+                var categories = api.GetCategories();
+                SharedView.ListCategories(categories);
+                var input = SharedController.GetAndValidateInput();
+                if (input.validatedInput > 0
+                    && input.validatedInput <= categories.Count)
+                {
+                    if (api.DeleteCategory(
+                        admin.Id,
+                        categories[input.validatedInput - 1].Id))
+                    {
+                        SharedError.Success();
+                    }
+                    else
+                    {
+                        var books = api.GetBooksInCategory(categories[input.validatedInput - 1].Id);
+                        SharedError.BooksStillInCategory(books.Count);              
+                    }
+                }
+                else
+                {
+                    if (input.validatedInput == 0
+                        && input.menuInput.ToLower() == "x")
+                    {
+                        continueLoop = false;
+                    }
+                    else
+                    {
+                        SharedError.PrintWrongInput();
+                    }
+                }
+
+            } while (continueLoop);
+        }
+
+        private static void AddCategory(User admin)
+        {
+            var continueLoop = true;
+            do
+            {
+                Console.Clear();
+                AdminView.AddCategory();
+                var input = SharedController.GetSearchInput();
+                if (SharedController.CheckIfNullOrEmptyOrWhiteSpace(input))
+                {
+                    SharedError.PrintWrongInput();
+                    continueLoop = true;
+                }
+                else
+                {
+                    if (api.AddCategory(admin.Id, input))
+                    {
+                        SharedError.Success();
+                    }
+                    else 
+                    {
+                        SharedError.Failed();
+                    }
+                    continueLoop = false;
+                }
+            } while (continueLoop);
         }
 
         private static void ChangeAuthor(User admin, Book book)

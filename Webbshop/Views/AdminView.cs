@@ -40,10 +40,15 @@ namespace Webbshop.Views
             Console.WriteLine($"\t6. Sök efter en bok");
             Console.WriteLine($"\t7. Lista alla böcker");
             Console.WriteLine();
+            SharedView.PrintWithDarkGreyText($"Kategorihantering - Admin");
+            Console.WriteLine($"\t8. Lägg till en kategori");
+            Console.WriteLine($"\t9. Ta bort en kategori");
+            Console.WriteLine($"\t10. Uppdatera en kategori");
+            Console.WriteLine();
             SharedView.PrintWithDarkGreyText($"Statistik - Admin");
-            Console.WriteLine($"\t8. Sålda böcker");
-            Console.WriteLine($"\t9. Intjänade kronor");
-            Console.WriteLine($"\t10. Bästa kunden");
+            Console.WriteLine($"\t11. Sålda böcker");
+            Console.WriteLine($"\t12. Intjänade kronor");
+            Console.WriteLine($"\t13. Bästa kunden");
             Console.WriteLine();
             Console.WriteLine($"\tX. Backa ett steg");
 
@@ -96,7 +101,7 @@ namespace Webbshop.Views
         {
             SharedView.PrintWithDarkGreyText($"Lägg till/ändra kategori för boken {book.Title}");
             Console.WriteLine();
-            SharedController.ListCategories(categories);
+            SharedView.ListCategories(categories);
         }
 
         
@@ -172,6 +177,34 @@ namespace Webbshop.Views
             Console.WriteLine("\t4. Ta bort bok");
             Console.WriteLine();
             Console.WriteLine("\tX. Backa ett steg");
+        }
+
+        internal static void UpdateCategory(string category)
+        {
+            SharedView.PrintWithDarkGreyText($"Uppdatera kategorinamnet för {category}.");
+            Console.WriteLine("\tTryck enter för att lämna kategorin oförändrad");
+            Console.WriteLine();
+            Console.Write("\tAnge den nya kategorins namn >");
+        }
+
+        internal static void UpdateCategory()
+        {
+            SharedView.PrintWithDarkGreyText("Uppdatera en kategori.");
+            Console.WriteLine("\tVälj kategori nedan att uppdatera, eller tryck x+enter för att avbryta.");
+            Console.WriteLine();
+        }
+
+        internal static void DeleteCategory()
+        {
+            SharedView.PrintWithDarkGreyText("Ta bort en kategori.");
+            Console.WriteLine("\tVälj kategori nedan att ta bort, eller tryck x+enter för att avbryta.");
+            Console.WriteLine();
+        }
+
+        internal static void AddCategory()
+        {
+            SharedView.PrintWithDarkGreyText("Lägg till en kategori.");
+            Console.Write("\tAnge den nya kategorins namn >");
         }
 
         internal static void UpdateBookInfo(Book book)

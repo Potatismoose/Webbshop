@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using webshopAPI.Models;
 
 namespace Webbshop.Views
 {
@@ -35,6 +37,22 @@ namespace Webbshop.Views
             Console.WriteLine("\t3. Sök efter kategori");
             Console.WriteLine("\t4. Lista samtliga kategorier");
             Console.WriteLine("\tX. Backa ett steg");
+        }
+
+        public static void ListCategories(List<BookCategory> categories)
+        {
+            if (categories.Count > 0)
+            {
+                for (int i = 0; i < categories.Count; i++)
+                {
+                    Console.WriteLine($"\t{i + 1}. {categories[i]}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Inga kategorier funna. Lägg till en kategori först.");
+                Thread.Sleep(2500);
+            }
         }
     }
 }

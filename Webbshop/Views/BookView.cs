@@ -42,5 +42,11 @@ namespace Webbshop.Views
             Console.WriteLine();
             Console.Write("\tVill du köpa boken? j/n >");
         }
+
+        internal static void SearchBooksFromAuthor()
+        {
+            SharedView.PrintWithDarkGreyText("Sök efter författare - X + enter för att avbryta");
+            Console.Write("\tSök >");
+        }
     }
 }
