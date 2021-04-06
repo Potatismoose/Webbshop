@@ -201,7 +201,7 @@ namespace Webbshop.Views
             SharedView.PrintWithDarkGreyText("Lista med sålda böcker");
             foreach (var book in listWithSoldBooks)
             {
-                Console.WriteLine($"{book.Title}\n{book.Price}kr\nköpt av användare {book.UserId}");
+                Console.WriteLine($"{book.Title}\n{book.Price}kr\nköpt av användare med id: {book.UserId}");
                 Console.WriteLine("-----------------------------------------");
             }
             Console.WriteLine("\tTryck enter för att gå vidare");

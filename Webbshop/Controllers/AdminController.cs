@@ -642,7 +642,7 @@ namespace Webbshop.Controllers
                         break;
                     case 4:
                         Console.Clear();
-                        //ChangeCategory(book);
+                        ChangeCategory(book, admin);
                         break;
                     case 0:
                         continueLoop = SharedController.GoBackIf_X_IsPressedOrPrintErrorMsg(input.menuInput);
