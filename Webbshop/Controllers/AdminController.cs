@@ -46,12 +46,7 @@ namespace Webbshop.Controllers
                         DeleteBook(book, admin);
                         break;
                     case 0:
-                        if (input.menuInput.ToLower() == "x")
-                        {
-                            continueLoop = false;
-                            break;
-                        }
-                        SharedError.PrintWrongMenuInput();
+                        continueLoop = SharedController.GoBackIf_X_IsPressedOrPrintErrorMsg(input.menuInput);
                         break;
                     default:
                         SharedError.PrintWrongMenuInput();
@@ -182,17 +177,18 @@ namespace Webbshop.Controllers
 
         private static void BestCustomer(User admin)
         {
-            //TODO fixa
+            AdminView.BestCustomer(api.BestCustomer(admin.Id));
         }
 
         private static void Earnings(User admin)
         {
-            //TODO fixa
+            AdminView.Earnings(api.MoneyEarned(admin.Id));
         }
 
         private static void SoldBooks(User admin)
         {
-            //TODO fixa
+            var listWithSoldBooks = api.SoldItems(admin.Id);
+            AdminView.SoldBooks(listWithSoldBooks);
         }
 
         private static void UpdateCategory(User admin)
@@ -649,12 +645,7 @@ namespace Webbshop.Controllers
                         //ChangeCategory(book);
                         break;
                     case 0:
-                        if (input.menuInput.ToLower() == "x")
-                        {
-                            continueLoop = false;
-                            break;
-                        }
-                        SharedError.PrintWrongMenuInput();
+                        continueLoop = SharedController.GoBackIf_X_IsPressedOrPrintErrorMsg(input.menuInput);
                         break;
                     default:
                         SharedError.PrintWrongMenuInput();

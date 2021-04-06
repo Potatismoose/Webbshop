@@ -83,6 +83,7 @@ namespace Webbshop.Controllers
                         BookController.BuyBySearchByAuthor(user);
                         break;
                     case 3:
+                        BookController.BuyBySearchByCategory(user);
                         break;
                     case 4:
                         BookController.BuyByChooseByCategory(user);
@@ -90,14 +91,7 @@ namespace Webbshop.Controllers
 
                         break;
                     case 0:
-                        if (input.menuInput.ToLower() == "x")
-                        {
-                            continueLoop = false;
-                        }
-                        else
-                        {
-                            SharedError.PrintWrongMenuInput();
-                        }
+                        continueLoop = GoBackIf_X_IsPressedOrPrintErrorMsg(input.menuInput);
                         break;
                 }
 

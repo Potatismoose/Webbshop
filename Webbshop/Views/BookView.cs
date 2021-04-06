@@ -48,5 +48,12 @@ namespace Webbshop.Views
             SharedView.PrintWithDarkGreyText("Sök efter författare - X + enter för att avbryta");
             Console.Write("\tSök >");
         }
+
+        internal static void SearchForCategory()
+        {
+            Console.Clear();
+            SharedView.PrintWithDarkGreyText("Sök efter en kategori");
+            Console.Write("\tSökord >");
+        }
     }
 }

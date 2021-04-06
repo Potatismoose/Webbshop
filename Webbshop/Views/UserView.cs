@@ -4,26 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Webbshop.Utils;
+using webshopAPI;
 
 namespace Webbshop.Views
 {
     class UserView
     {
         
-        public static void PrintBuyMenuOptions(List<string> buyMenuOptions)
+        public static void PrintBuyMenuOptions()
         {
             Console.Clear();
-            int menuChoiceCounter = 1;
             SharedView.PrintWithGreenText($"\tVälkommen till bokshoppen");
-            for (int i = 0; i < buyMenuOptions.Count; i++)
-            {
-                if (i == 0)
-                {
-                    SharedView.PrintWithDarkGreyText(buyMenuOptions[i]);
-                    continue;
-                }
-                Console.WriteLine($"\t{menuChoiceCounter++}. {buyMenuOptions[i]}");
-            }            
+            Console.WriteLine("\t1. Köp böcker");
+            Console.WriteLine("\tX. Logga ut");
         }
 
         public static (string username, string password, string verifyPassword) Register()

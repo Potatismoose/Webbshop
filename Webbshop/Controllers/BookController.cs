@@ -84,21 +84,69 @@ namespace Webbshop.Controllers
             } while (continueLoop);
         }
 
+        internal static void BuyBySearchByCategory(User user)
+        {
+            var categories = SearchAndListCategories();
+            var chosenCategory = ChooseCategoryToView(categories);
+            var books = api.GetBooksInCategory(chosenCategory.Id);
+            if (books.Count == 0)
+            {
+                SharedError.NothingFound();
+            }
+            else
+            {
+                var book = ListAndChooseBook(books);
+                if (book != null)
+                {
+                    ShowInfoAboutBook(user, book);
+                }
+            }
+        }
+
         internal static void BuyByChooseByCategory(User user)
         {
             var categories = FindAndListCategories();
             var chosenCategory = ChooseCategoryToView(categories);
             var books = api.GetBooksInCategory(chosenCategory.Id);
-            var book = ListAndChooseBook(books);
-            BuyBook(user, book);
-            
+            if (books.Count == 0)
+            {
+                SharedError.NothingFound();
+            }
+            else
+            {
+                var book = ListAndChooseBook(books);
+                if (book != null)
+                {
+                    ShowInfoAboutBook(user, book);
+                }
+            }
         }
 
         private static List<BookCategory> FindAndListCategories()
         {
-            var categories = api.GetCategories();
+            List<BookCategory> categories = new List<BookCategory>();
+            categories = api.GetCategories();
             Console.Clear();
-            SharedView.ListCategories(categories);
+            if (categories.Count > 0)
+            {
+                SharedView.ListCategories(categories);
+            }
+
+            return categories;
+        }
+
+        private static List<BookCategory> SearchAndListCategories()
+        {
+            List<BookCategory> categories = new List<BookCategory>();
+            BookView.SearchForCategory();
+            var input = SharedController.GetSearchInput();
+            categories = api.GetCategories(input);
+            Console.Clear();
+            if (categories.Count > 0)
+            {
+                SharedView.ListCategories(categories);
+            }
+
             return categories;
         }
 

@@ -10,18 +10,18 @@ namespace Webbshop.Views
 {
     internal static class AdminView
     {
-        private static int MenuChoiceCounter { get; set; } = 1;
+        
 
-        public static int Print()
+        public static void Print()
         {
-            ResetMenuCounter();
+            
             Console.Clear();
             SharedView.PrintWithDarkGreyText("Administratoralternativ");
             Console.WriteLine("\t1. Adminfunktioner");
             Console.WriteLine("\t2. Handla böcker");
             Console.WriteLine("\tX. Logga ut");
 
-            return MenuChoiceCounter;
+          
         }
 
         public static void PrintAdminFunctions()
@@ -66,12 +66,6 @@ namespace Webbshop.Views
                  "Visa intjänade kronor",
                  "Lista sålda böcker"
             */
-        }
-
-        public static int PrintAdminMenu()
-        {
-            ResetMenuCounter();
-            return 0;
         }
 
         internal static Dictionary<string, string> AddBook()
@@ -165,6 +159,18 @@ namespace Webbshop.Views
             Console.Write("\tAnge antal du vill lägga till eller ta bort");
         }
 
+        internal static void BestCustomer((User, int) bestCustomer)
+        {
+            Console.Clear();
+            SharedView.PrintWithDarkGreyText("The best customer");
+            Console.WriteLine($"{bestCustomer.Item1.Name} " +
+                $"är den bästa kunden med {bestCustomer.Item2} " +
+                $"köpta böcker");
+            Console.WriteLine();
+            Console.WriteLine("Tryck enter för att fortsätta");
+            Console.ReadKey();
+        }
+
         internal static void UpdateBook(Book book)
         {
             SharedView.PrintWithDarkGreyText($"Bokalternativ för {book.Title} - {book.Category.Name}");
@@ -177,6 +183,29 @@ namespace Webbshop.Views
             Console.WriteLine("\t4. Ta bort bok");
             Console.WriteLine();
             Console.WriteLine("\tX. Backa ett steg");
+        }
+
+        internal static void Earnings(int money)
+        {
+            Console.Clear();
+            SharedView.PrintWithDarkGreyText("Omsättning av sålda böcker");
+            Console.WriteLine($"\tOmsättning - {money}kr ");
+            Console.WriteLine("\tTryck enter för att fortsätta");
+            Console.ReadKey();
+        }
+
+        internal static void SoldBooks(List<SoldBook> listWithSoldBooks)
+        {
+            Console.Clear();
+            listWithSoldBooks = listWithSoldBooks.OrderBy(b => b.Title).ToList();
+            SharedView.PrintWithDarkGreyText("Lista med sålda böcker");
+            foreach (var book in listWithSoldBooks)
+            {
+                Console.WriteLine($"{book.Title}\n{book.Price}kr\nköpt av användare {book.UserId}");
+                Console.WriteLine("-----------------------------------------");
+            }
+            Console.WriteLine("\tTryck enter för att gå vidare");
+            Console.ReadKey();
         }
 
         internal static void UpdateCategory(string category)
@@ -278,11 +307,6 @@ namespace Webbshop.Views
                 } while (continueLoop);
             }
             return askUserForThisInput;
-        }
-
-        private static void ResetMenuCounter()
-        {
-            MenuChoiceCounter = 1;
         }
     }
 }
