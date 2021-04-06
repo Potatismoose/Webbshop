@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Webbshop.Utils
 {
-    class GeneralViewHelper
+    internal class GeneralViewHelper
     {
+        /// <summary>
+        /// Waits 2 sec and then clears screen
+        /// </summary>
         internal static void WaitAndClearScreen()
         {
             Thread.Sleep(2000);

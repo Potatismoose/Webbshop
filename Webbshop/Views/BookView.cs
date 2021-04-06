@@ -8,12 +8,20 @@ namespace Webbshop.Views
 {
     internal class BookView
     {
+        /// <summary>
+        /// Prints out the current number of books
+        /// </summary>
+        /// <param name="book">takes a book to print from</param>
         internal static void ChangedNumberOfBooks(Book book)
         {
             Console.WriteLine($"\tAntalet böcker är nu {book.Amount}");
             Thread.Sleep(2500);
         }
 
+        /// <summary>
+        /// Prints a list with books
+        /// </summary>
+        /// <param name="listWithBooks">takes a list with books to print</param>
         internal static void ListAllBooks(List<Book> listWithBooks)
         {
             SharedView.PrintWithDarkGreyText("Lista med alla böcker som matchar");
@@ -24,12 +32,38 @@ namespace Webbshop.Views
             }
         }
 
+        /// <summary>
+        /// Prints options for searching books from a author
+        /// </summary>
+        internal static void SearchBooksFromAuthor()
+        {
+            SharedView.PrintWithDarkGreyText("Sök efter författare - X + enter för att avbryta");
+            Console.Write("\tSök >");
+        }
+
+        /// <summary>
+        /// Prints options for searching a book
+        /// </summary>
         internal static void SearchForBook()
         {
             SharedView.PrintWithDarkGreyText("Sök efter en bok - X + enter för att avbryta");
             Console.Write("\tSök >");
         }
 
+        /// <summary>
+        /// Prints options for searching a category
+        /// </summary>
+        internal static void SearchForCategory()
+        {
+            Console.Clear();
+            SharedView.PrintWithDarkGreyText("Sök efter en kategori");
+            Console.Write("\tSökord >");
+        }
+
+        /// <summary>
+        /// Print info and options for showing info about the book
+        /// </summary>
+        /// <param name="book"></param>
         internal static void ShowInfoAboutBook(Book book)
         {
             SharedView.PrintWithDarkGreyText("Information om bok");
@@ -41,19 +75,6 @@ namespace Webbshop.Views
 
             Console.WriteLine();
             Console.Write("\tVill du köpa boken? j/n >");
-        }
-
-        internal static void SearchBooksFromAuthor()
-        {
-            SharedView.PrintWithDarkGreyText("Sök efter författare - X + enter för att avbryta");
-            Console.Write("\tSök >");
-        }
-
-        internal static void SearchForCategory()
-        {
-            Console.Clear();
-            SharedView.PrintWithDarkGreyText("Sök efter en kategori");
-            Console.Write("\tSökord >");
         }
     }
 }

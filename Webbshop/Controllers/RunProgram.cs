@@ -1,19 +1,16 @@
-﻿using System;
-using Webbshop.Views;
-using webshopAPI;
-using System.Threading;
-using webshopAPI.Helpers;
+﻿using webshopAPI.Helpers;
 
 namespace Webbshop.Controllers
 {
-    class RunProgram
+    internal class RunProgram
     {
+        /// <summary>
+        /// A method for starting up the program.
+        /// </summary>
         public void StartProgram()
         {
             Seeder.Seed();
             Menu.PrintMainMenu();
         }
-
-        
     }
 }

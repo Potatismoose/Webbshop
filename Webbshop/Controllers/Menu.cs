@@ -1,19 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Webbshop.Utils;
 using Webbshop.Views;
 using webshopAPI;
 
 namespace Webbshop.Controllers
 {
-    static class Menu
+    internal static class Menu
     {
-        static string abortChar = "x";
+        /// <summary>
+        /// Simplifying what the X stands for. abort character
+        /// </summary>
+        private static string abortChar = "x";
 
+        /// <summary>
+        /// Method for printing the main menu
+        /// </summary>
         public static void PrintMainMenu()
         {
             int userMenuChoice;
@@ -42,17 +43,15 @@ namespace Webbshop.Controllers
                                 && !userCredentials.userName.Contains(abortChar))
                             {
                                 SharedError.PrintWrongCredentials(user);
-                                
-                                
+
                                 continue;
                             }
                             else if (userCredentials.userName.Contains(abortChar))
-                            { 
-                                break; 
+                            {
+                                break;
                             }
                             else if (user.IsAdmin)
                             {
-                               
                                 AdminController.PrintAdminSelectionMenu(user);
                             }
                             else
@@ -72,9 +71,11 @@ namespace Webbshop.Controllers
                             }
                             SharedError.Success();
                             break;
+
                         case 0:
                             Environment.Exit(1);
                             break;
+
                         default:
                             SharedError.PrintWrongMenuInput();
                             break;
@@ -82,9 +83,5 @@ namespace Webbshop.Controllers
                 }
             } while (menuInput.ToLower() != "q");
         }
-
-
-
-        
     }
 }

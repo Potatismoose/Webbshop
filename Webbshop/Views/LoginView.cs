@@ -1,11 +1,13 @@
 ﻿using System;
 
-
 namespace Webbshop.Views
 {
-    static class LoginView
+    internal static class LoginView
     {
-
+        /// <summary>
+        /// Prints loginpage and takes input
+        /// </summary>
+        /// <returns>Returns username and password</returns>
         public static (string userName, string password) PrintLoginPage()
         {
             SharedView.PrintWithDarkGreyText("Logga in\n");

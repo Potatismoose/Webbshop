@@ -1,29 +1,28 @@
-﻿using System.Collections.Generic;
-using System;
-using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using webshopAPI;
 using webshopAPI.Models;
-using Webbshop.Controllers;
-using System.Linq;
 
 namespace Webbshop.Views
 {
     internal static class AdminView
     {
-        
-
+        /// <summary>
+        /// Print the main menu option when admin logs in.
+        /// </summary>
         public static void Print()
         {
-            
             Console.Clear();
             SharedView.PrintWithDarkGreyText("Administratoralternativ");
             Console.WriteLine("\t1. Adminfunktioner");
             Console.WriteLine("\t2. Handla böcker");
             Console.WriteLine("\tX. Logga ut");
-
-          
         }
 
+        /// <summary>
+        /// Prints the admin functions
+        /// </summary>
         public static void PrintAdminFunctions()
         {
             Console.Clear();
@@ -51,23 +50,13 @@ namespace Webbshop.Views
             Console.WriteLine($"\t13. Bästa kunden");
             Console.WriteLine();
             Console.WriteLine($"\tX. Backa ett steg");
-
-            
-
-
-            /*
-                 ,
-                 "Lägg till kategori till en bok",
-                 "Uppdatera bokinformation",
-                 "Uppdatera bokinformation",
-
-                 "Statistik - Admin",
-                 "Bästa kunden",
-                 "Visa intjänade kronor",
-                 "Lista sålda böcker"
-            */
         }
 
+        /// <summary>
+        /// prints options for adding a book and asks the user for input, 
+        /// returning those options to controller for managing the book creation.
+        /// </summary>
+        /// <returns>returns a dictionary with neccessary things for creating a book</returns>
         internal static Dictionary<string, string> AddBook()
         {
             SharedView.PrintWithDarkGreyText("Lägg till en bok");
@@ -75,6 +64,18 @@ namespace Webbshop.Views
             return bookInformation;
         }
 
+        /// <summary>
+        /// Prints options for add category
+        /// </summary>
+        internal static void AddCategory()
+        {
+            SharedView.PrintWithDarkGreyText("Lägg till en kategori.");
+            Console.Write("\tAnge den nya kategorins namn >");
+        }
+        /// <summary>
+        /// Asks user for username and password, and returns this
+        /// </summary>
+        /// <returns>Username and password for creating a user</returns>
         internal static (string userName, string password) AddUser()
         {
             Console.Clear();
@@ -86,11 +87,35 @@ namespace Webbshop.Views
             return (userName, password);
         }
 
+        /// <summary>
+        /// Prints out the best customer.
+        /// </summary>
+        /// <param name="bestCustomer"></param>
+        internal static void BestCustomer((User, int) bestCustomer)
+        {
+            Console.Clear();
+            SharedView.PrintWithDarkGreyText("The best customer");
+            Console.WriteLine($"{bestCustomer.Item1.Name} " +
+                $"är den bästa kunden med {bestCustomer.Item2} " +
+                $"köpta böcker");
+            Console.WriteLine();
+            Console.WriteLine("Tryck enter för att fortsätta");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Prints out the options for changing the author
+        /// </summary>
         internal static void ChangeAuthor()
         {
             Console.Write("Ange ny författare >");
         }
 
+        /// <summary>
+        /// Prints out the change category options
+        /// </summary>
+        /// <param name="book"></param>
+        /// <param name="categories"></param>
         internal static void ChangeCategory(Book book, List<BookCategory> categories)
         {
             SharedView.PrintWithDarkGreyText($"Lägg till/ändra kategori för boken {book.Title}");
@@ -98,24 +123,56 @@ namespace Webbshop.Views
             SharedView.ListCategories(categories);
         }
 
-        
-
+        /// <summary>
+        /// Prints the options for changing price of a book
+        /// </summary>
         internal static void ChangePrice()
         {
             Console.Write("Ange nytt pris >");
         }
 
+        /// <summary>
+        /// Prints the options for changing title of a book
+        /// </summary>
         internal static void ChangeTitle()
         {
             Console.Write("Ange ny boktitel >");
         }
 
+        /// <summary>
+        /// Prints the options for deleting of a book
+        /// </summary>
         internal static void DeleteBook(Book book)
         {
             SharedView.PrintWithDarkGreyText("Ta bort böcker");
             Console.WriteLine($"\tHur många vill du ta bort av boken {book.Title}?");
         }
 
+        /// <summary>
+        /// Prints the options for deleting of a category
+        /// </summary>
+        internal static void DeleteCategory()
+        {
+            SharedView.PrintWithDarkGreyText("Ta bort en kategori.");
+            Console.WriteLine("\tVälj kategori nedan att ta bort, eller tryck x+enter för att avbryta.");
+            Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Prints the options for earnings of sold books
+        /// </summary>
+        internal static void Earnings(int money)
+        {
+            Console.Clear();
+            SharedView.PrintWithDarkGreyText("Omsättning av sålda böcker");
+            Console.WriteLine($"\tOmsättning - {money}kr ");
+            Console.WriteLine("\tTryck enter för att fortsätta");
+            Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Prints the options editing a user
+        /// </summary>
         internal static void EditUser(User editUser)
         {
             Console.Clear();
@@ -131,6 +188,10 @@ namespace Webbshop.Views
             Console.WriteLine("\tX. Backa ett steg");
         }
 
+        /// <summary>
+        /// Prints all users in a list
+        /// </summary>
+        /// <param name="listWithUsers">Takes a list with users</param>
         internal static void ListAllUsers(List<User> listWithUsers)
         {
             SharedView.PrintWithDarkGreyText("Lista med alla användare");
@@ -141,6 +202,10 @@ namespace Webbshop.Views
             }
         }
 
+        /// <summary>
+        /// Prints all options for searching a user.
+        /// </summary>
+        /// <param name="admin">Takes the admin options just for using the ping function</param>
         internal static void SearchForUser(User admin)
         {
             Console.Clear();
@@ -150,6 +215,9 @@ namespace Webbshop.Views
             Console.Write("\tSökord >");
         }
 
+        /// <summary>
+        /// Prints the options for setting amount of a book
+        /// </summary>
         internal static void SetAmount()
         {
             SharedView.PrintWithDarkGreyText("Ändra antal tillgängliga böcker");
@@ -159,41 +227,10 @@ namespace Webbshop.Views
             Console.Write("\tAnge antal du vill lägga till eller ta bort");
         }
 
-        internal static void BestCustomer((User, int) bestCustomer)
-        {
-            Console.Clear();
-            SharedView.PrintWithDarkGreyText("The best customer");
-            Console.WriteLine($"{bestCustomer.Item1.Name} " +
-                $"är den bästa kunden med {bestCustomer.Item2} " +
-                $"köpta böcker");
-            Console.WriteLine();
-            Console.WriteLine("Tryck enter för att fortsätta");
-            Console.ReadKey();
-        }
-
-        internal static void UpdateBook(Book book)
-        {
-            SharedView.PrintWithDarkGreyText($"Bokalternativ för {book.Title} - {book.Category.Name}");
-            Console.WriteLine($"\t{book.Title} finns det {book.Amount}st av i lager.");
-            Console.WriteLine($"\tBoken är skriven av {book.Author} ");
-            Console.WriteLine();
-            Console.WriteLine("\t1. Lägg till fler av denna bok");
-            Console.WriteLine("\t2. Uppdatera bokinformation");
-            Console.WriteLine("\t3. Lägg till kategori till bok");
-            Console.WriteLine("\t4. Ta bort bok");
-            Console.WriteLine();
-            Console.WriteLine("\tX. Backa ett steg");
-        }
-
-        internal static void Earnings(int money)
-        {
-            Console.Clear();
-            SharedView.PrintWithDarkGreyText("Omsättning av sålda böcker");
-            Console.WriteLine($"\tOmsättning - {money}kr ");
-            Console.WriteLine("\tTryck enter för att fortsätta");
-            Console.ReadKey();
-        }
-
+        /// <summary>
+        /// Printing a list with sold books
+        /// </summary>
+        /// <param name="listWithSoldBooks">Takes a list with sold books</param>
         internal static void SoldBooks(List<SoldBook> listWithSoldBooks)
         {
             Console.Clear();
@@ -208,34 +245,28 @@ namespace Webbshop.Views
             Console.ReadKey();
         }
 
-        internal static void UpdateCategory(string category)
+        /// <summary>
+        /// Printing options for updating a book
+        /// </summary>
+        /// <param name="book">Takes a book to change</param>
+        internal static void UpdateBook(Book book)
         {
-            SharedView.PrintWithDarkGreyText($"Uppdatera kategorinamnet för {category}.");
-            Console.WriteLine("\tTryck enter för att lämna kategorin oförändrad");
+            SharedView.PrintWithDarkGreyText($"Bokalternativ för {book.Title} - {book.Category.Name}");
+            Console.WriteLine($"\t{book.Title} finns det {book.Amount}st av i lager.");
+            Console.WriteLine($"\tBoken är skriven av {book.Author} ");
             Console.WriteLine();
-            Console.Write("\tAnge den nya kategorins namn >");
-        }
-
-        internal static void UpdateCategory()
-        {
-            SharedView.PrintWithDarkGreyText("Uppdatera en kategori.");
-            Console.WriteLine("\tVälj kategori nedan att uppdatera, eller tryck x+enter för att avbryta.");
+            Console.WriteLine("\t1. Lägg till fler av denna bok");
+            Console.WriteLine("\t2. Uppdatera bokinformation");
+            Console.WriteLine("\t3. Lägg till kategori till bok");
+            Console.WriteLine("\t4. Ta bort bok");
             Console.WriteLine();
+            Console.WriteLine("\tX. Backa ett steg");
         }
 
-        internal static void DeleteCategory()
-        {
-            SharedView.PrintWithDarkGreyText("Ta bort en kategori.");
-            Console.WriteLine("\tVälj kategori nedan att ta bort, eller tryck x+enter för att avbryta.");
-            Console.WriteLine();
-        }
-
-        internal static void AddCategory()
-        {
-            SharedView.PrintWithDarkGreyText("Lägg till en kategori.");
-            Console.Write("\tAnge den nya kategorins namn >");
-        }
-
+        /// <summary>
+        /// Printing options for updating specific book info
+        /// </summary>
+        /// <param name="book">takes a book to change</param>
         internal static void UpdateBookInfo(Book book)
         {
             SharedView.PrintWithDarkGreyText($"Uppdatera {book.Title}");
@@ -259,6 +290,32 @@ namespace Webbshop.Views
             Console.WriteLine("\tX. Backa ett steg");
         }
 
+        /// <summary>
+        /// Prints the option for updating a category
+        /// </summary>
+        /// <param name="category">takes a category name for printing it´s name</param>
+        internal static void UpdateCategory(string category)
+        {
+            SharedView.PrintWithDarkGreyText($"Uppdatera kategorinamnet för {category}.");
+            Console.WriteLine("\tTryck enter för att lämna kategorin oförändrad");
+            Console.WriteLine();
+            Console.Write("\tAnge den nya kategorins namn >");
+        }
+
+        /// <summary>
+        /// Print options for updating a category 
+        /// </summary>
+        internal static void UpdateCategory()
+        {
+            SharedView.PrintWithDarkGreyText("Uppdatera en kategori.");
+            Console.WriteLine("\tVälj kategori nedan att uppdatera, eller tryck x+enter för att avbryta.");
+            Console.WriteLine();
+        }
+
+        /// <summary>
+        /// Asks the user for input to create a book
+        /// </summary>
+        /// <returns>dictionary with info to create book</returns>
         private static Dictionary<string, string> AskForInputToCreateBook()
         {
             Dictionary<string, string> askUserForThisInput = new Dictionary<string, string> {
@@ -303,7 +360,6 @@ namespace Webbshop.Views
                         askUserForThisInput[element.Key] = input;
                         continueLoop = false;
                     }
-
                 } while (continueLoop);
             }
             return askUserForThisInput;

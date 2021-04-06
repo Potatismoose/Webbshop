@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Webbshop.Utils;
-using webshopAPI;
 
 namespace Webbshop.Views
 {
-    class UserView
+    internal class UserView
     {
-        
+        /// <summary>
+        /// Print the first menu the standard user sees after login
+        /// </summary>
         public static void PrintBuyMenuOptions()
         {
             Console.Clear();
@@ -19,6 +15,10 @@ namespace Webbshop.Views
             Console.WriteLine("\tX. Logga ut");
         }
 
+        /// <summary>
+        /// Prints the register page and takes a input and returns this
+        /// </summary>
+        /// <returns>returns information for registering a user</returns>
         public static (string username, string password, string verifyPassword) Register()
         {
             Console.Clear();
@@ -30,7 +30,7 @@ namespace Webbshop.Views
             Console.Write("\tVerifiera lösenord> ");
             var verifiedPassword = Console.ReadLine();
 
-            return (username,password,verifiedPassword);
+            return (username, password, verifiedPassword);
         }
     }
 }
